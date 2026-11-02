@@ -16,15 +16,29 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Extract ZIP
+      - name: Extract ZIP if present
         run: |
-          unzip -o BiometricTest.zip
-          rm BiometricTest.zip
+          if [ -f BiometricTest.zip ]; then
+            unzip -q -o BiometricTest.zip -d tmp_extract
+            cp -a tmp_extract/BiometricTest/. .
+            rm -rf tmp_extract BiometricTest.zip
+          fi
 
-      - name: Commit extracted files
+      - name: Flatten nested folder
+        run: |
+          if [ -d BiometricTest ]; then
+            cp -a BiometricTest/. .
+            rm -rf BiometricTest
+          fi
+
+      - name: Commit changes
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git add .
-          git commit -m "Extract project files from ZIP"
-          git push
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes"
+          else
+            git commit -m "Flatten project structure"
+            git push
+          fi
