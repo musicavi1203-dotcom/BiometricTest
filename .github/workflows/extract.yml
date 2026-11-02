@@ -1,0 +1,26 @@
+name: Extract ZIP
+
+on:
+  push:
+    paths:
+      - '*.zip'
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Extract ZIP
+        run: |
+          unzip -o BiometricTest.zip
+          rm BiometricTest.zip
+
+      - name: Commit extracted files
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add .
+          git commit -m "Extract project files from ZIP"
+          git push
