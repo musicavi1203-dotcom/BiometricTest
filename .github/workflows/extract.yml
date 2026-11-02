@@ -1,6 +1,7 @@
 name: Extract ZIP
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - '*.zip'
